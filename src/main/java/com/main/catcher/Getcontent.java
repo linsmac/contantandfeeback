@@ -11,10 +11,9 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,7 +118,7 @@ public class Getcontent {
     }
 
 
-    public static List<Map<String, String>> sortIndexTolist(String content) {
+    public static List<Map<String, String>> sortIndexTolist(String content2) {
 
         String regex ="<div class=\"l-articlePage\">"
                 +"[\\s\\S]*?<div class=\"c-authorInfo__id\">[\\s\\S]*?<a href=\".*?\" class=\"c-link c-link--gn u-ellipsis\">([\\s\\S]*?)</a>"
@@ -131,11 +130,11 @@ public class Getcontent {
 
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         Pattern pa = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
-        Matcher ma = pa.matcher(content);
+        Matcher ma = pa.matcher(content2);
 
         while (ma.find()) {
-            int runreback = 1;
-            if (runreback==1) {
+
+            if (getRepoTime(ma.group(3))>getDateTimeForHostDays()) {
 
                 Map<String, String> map = new HashMap<String, String>();
                 map.put("名字",sortTag(ma.group(1)));
@@ -161,7 +160,23 @@ public class Getcontent {
 
         return list;
     }
+    private static long getDateTimeForHostDays() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1);
+        return cal.getTimeInMillis();
+    }
 
+    private static long getRepoTime(String dateTime) {
+        Date date = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        try {
+            date = sdf.parse(dateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.getTime();
+    }
 
 
 
