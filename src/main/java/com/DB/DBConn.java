@@ -7,28 +7,33 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import static javax.swing.UIManager.get;
+
 public class DBConn {
     public static boolean insert(List<Map<String,String>> list)
     {
         Connection conn =null;
         PreparedStatement st = null;
         String query = "INSERT INTO mobile.mobile02 ("
-                + "title,"+"content,"+"url,"+"step,"+"time,"+"writer ) VALUES ("
-                + "?, ?, ?, ?, ?, ?)";
+                + "title,"+"content,"+"url,"+"step,"+"time,"+"writer,"+"type ) VALUES ("
+                + "?, ?, ?, ?, ?, ?, ?)";
 
         try {
             conn = DBConn.conn();
             st = conn.prepareStatement(query);
 
-            for(Map m : list){
-                st.setString(1, m.get("標題").toString());
-                st.setString(2, m.get("內文").toString());
-                st.setString(3, m.get("網址").toString());
-                st.setString(4, m.get("樓").toString());
-                st.setString(5, m.get("發文時間").toString());
-                st.setString(6, m.get("作者").toString());
-                st.execute();
-            }
+                for (Map m : list) {
+                    st.setString(1, m.get("標題").toString());
+                    st.setString(2, m.get("內文").toString());
+                    st.setString(3, m.get("網址").toString());
+                    st.setString(4, m.get("樓").toString());
+                    st.setString(5, m.get("發文時間").toString());
+                    st.setString(6, m.get("作者").toString());
+                    st.setString(7, "main");
+
+
+                    st.execute();
+                }
 
         }
         catch (SQLException se)
@@ -91,20 +96,23 @@ public class DBConn {
         Connection conn =null;
         PreparedStatement st = null;
         String query = "INSERT INTO mobile.mobile021 ("
-                + "title,"+"content,"+"step,"+"writer,"+"time ) VALUES ("
-                + "?, ?, ?, ?, ?)";
+                + "title,"+"content,"+"step,"+"writer,"+"time,"+"type ) VALUES ("
+                + "?, ?, ?, ?, ?, ?)";
 
         try {
             conn = DBConn.conn();
             st = conn.prepareStatement(query);
 
-            for(Map m : list2){
-                st.setString(1, m.get("標題").toString());
-                st.setString(2, m.get("內容").toString());
-                st.setString(3, m.get("樓層").toString());
-                st.setString(4, m.get("名字").toString());
-                st.setString(5, m.get("時間").toString());
-                st.execute();
+            for(int i = 1;i<list2.size();i++) {
+
+                    st.setString(1, list2.get(i).get("標題"));
+                    st.setString(2, list2.get(i).get("內容"));
+                    st.setString(3, list2.get(i).get("樓層"));
+                    st.setString(4, list2.get(i).get("名字"));
+                    st.setString(5, list2.get(i).get("時間"));
+                    st.setString(6,"Reply");
+                    st.execute();
+
             }
 
         }

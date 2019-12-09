@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="entities.Mobile02Entity" table="mobile02" schema="mobile">
+        <id name="id" column="id"/>
+        <property name="title" column="title"/>
+        <property name="content" column="content"/>
+        <property name="url" column="url"/>
+        <property name="step" column="step"/>
+        <property name="time" column="time"/>
+        <property name="writer" column="writer"/>
+        <property name="tag" column="tag"/>
+    </class>
+</hibernate-mapping>

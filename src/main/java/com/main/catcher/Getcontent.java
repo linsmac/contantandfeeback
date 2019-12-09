@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,7 +64,7 @@ public class Getcontent {
                 +"[\\s\\S]*?<a href=\".*?\" class=\"c-link c-link--gn u-ellipsis\">([\\s\\S]*?)</a>"
                 +"[\\s\\S]*?<h1 class=\"t2\">(.*?)</h1>[\\s\\S]*?<span class=\"o-fNotes o-fSubMini\">(\\w+-\\w+-\\w+ \\w+:\\w+)"
                 +"[\\s\\S]*?<div itemprop=\"articleBody\">([\\s\\S]*?)</div>"
-                +"[\\s\\S]*?<span class=\"o-fNotes o-fSubMini\">(#[1-9])+</span>";
+                +"[\\s\\S]*?<span class=\"o-fNotes o-fSubMini\">#([1-9])+</span>";
 
 
 
@@ -120,19 +121,20 @@ public class Getcontent {
 
     public static List<Map<String, String>> sortIndexTolist(String content2) {
 
-        String regex ="<div class=\"l-articlePage\">"
-                +"[\\s\\S]*?<div class=\"c-authorInfo__id\">[\\s\\S]*?<a href=\".*?\" class=\"c-link c-link--gn u-ellipsis\">([\\s\\S]*?)</a>"
+        String regex =" <div class=\"l-articlePage\">"
+                      +"[\\s\\S]*?<div class=\"c-authorInfo__id\">[\\s\\S]*?<a href=\".*?\" class=\"c-link c-link--gn u-ellipsis\">([\\s\\S]*?)</a>"
                       +"[\\s\\S]*?<article id=\".*?\" class=\"[\\s\\S]*?\">([\\s\\S]*?)</article>"
                       +"[\\s\\S]*?<span class=\"o-fNotes o-fSubMini\">(\\w+-\\w+-\\w+ \\w+:\\w+)"
-                      +"[\\s\\S]*?<span class=\"o-fNotes o-fSubMini\">(#[0-9]*)</span>[\\s\\S]*?</div>";
-
+                      +"[\\s\\S]*?<span class=\"o-fNotes o-fSubMini\">#([0-9]*)</span>[\\s\\S]*?</div>";
 
 
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         Pattern pa = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+
         Matcher ma = pa.matcher(content2);
 
         while (ma.find()) {
+
 
             if (getRepoTime(ma.group(3))>getDateTimeForHostDays()) {
 
@@ -141,13 +143,25 @@ public class Getcontent {
                 map.put("內容",sortTag(ma.group(2)));
                 map.put("時間", ma.group(3));
                 map.put("樓層", ma.group(4));
-                map.put("標題","用iPhone又用&quot;仿&quot;AirPods是什麼心態？");
+
+
+                Pattern p = Pattern.compile("<h1 class=\"t2\">([\\s\\S]*?)</h1>",Pattern.CASE_INSENSITIVE);
+                Matcher m = p.matcher(content2);
+
+                while (m.find()){
+                    map.put("標題",m.group(1));}
+
+
+
                 list.add(map);
+
             }
 
         }
 
-        for(int i = 0;i<list.size();i++)
+
+
+        for(int i = 1;i<list.size();i++)
         {
             System.out.println((i+1)+"\n標題:"+list.get(i).get("標題")
                                    +"\n名字:"+list.get(i).get("名字")
@@ -163,7 +177,7 @@ public class Getcontent {
     private static long getDateTimeForHostDays() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -3);
         return cal.getTimeInMillis();
     }
 
